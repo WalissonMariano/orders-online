@@ -43,13 +43,12 @@ export class ItemController {
     return await this.itemService.createItem(createItemDto);
   }
 
-
   @ApiOperation({ summary: 'Altera item por id' })
   @UsePipes(ValidationPipe)
   @Patch(':id')
   async updateItem(
-    @Param('id') id: number, 
-    @Body() updateItemDto: UpdateItemDto
+    @Param('id') id: number,
+    @Body() updateItemDto: UpdateItemDto,
   ): Promise<Item> {
     return await this.itemService.updateItem(id, updateItemDto);
   }
@@ -59,5 +58,4 @@ export class ItemController {
   async deleteItem(@Param('id') id: number): Promise<DeleteResult> {
     return await this.itemService.deleteItem(id);
   }
-
 }

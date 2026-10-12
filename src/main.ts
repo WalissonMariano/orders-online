@@ -7,7 +7,9 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('Documentação API Cadastro de Pedidos')
-    .setDescription('API para gerenciar pedidos, incluindo operações de criação, atualização, exclusão e visualização de pedidos e seus itens.')
+    .setDescription(
+      'API para gerenciar pedidos, incluindo operações de criação, atualização, exclusão e visualização de pedidos e seus itens.',
+    )
     .setVersion('2.0')
     .addTag('Order')
     .addTag('Item')

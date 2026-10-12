@@ -7,36 +7,37 @@ import { ItemService } from '../item/item.service';
 
 @Injectable()
 export class OrderItemsService {
-    constructor(
-        @InjectRepository(OrderItems)
-        private readonly orderItemsRepository: Repository<OrderItems>,
-        private readonly itemService: ItemService,
-    ){}
- 
-    async getAllTypesOfItems(): Promise<OrderItems[]> {
-        const orderItems = this.orderItemsRepository.find()
+  constructor(
+    @InjectRepository(OrderItems)
+    private readonly orderItemsRepository: Repository<OrderItems>,
+    private readonly itemService: ItemService,
+  ) {}
 
-        return orderItems;
-    }
+  async getAllTypesOfItems(): Promise<OrderItems[]> {
+    const orderItems = this.orderItemsRepository.find();
 
-    async createOrderItems(
-        createOrderItems: CreateOrderItemsDto,
-    ): Promise<OrderItems> {
-        await this.itemService.getItemById(createOrderItems.itemId); 
+    return orderItems;
+  }
 
-        return this.orderItemsRepository.save(createOrderItems);
-    }
+  async createOrderItems(
+    createOrderItems: CreateOrderItemsDto,
+  ): Promise<OrderItems> {
+    await this.itemService.getItemById(createOrderItems.itemId);
 
-    async calculateTaxValue(itemId: number, quantity: number): Promise<number> {
-        const unitValue = (await this.itemService.getItemById(itemId)).unitValue;
-        const taxPercentage = await this.itemService.getTaxPercentageByItemId(itemId);
+    return this.orderItemsRepository.save(createOrderItems);
+  }
 
-        return unitValue * (Number(taxPercentage) / 100) * quantity;
-    }
+  async calculateTaxValue(itemId: number, quantity: number): Promise<number> {
+    const unitValue = (await this.itemService.getItemById(itemId)).unitValue;
+    const taxPercentage =
+      await this.itemService.getTaxPercentageByItemId(itemId);
 
-    async calculateTotalValue(itemId: number, quantity: number): Promise<number> {
-        const unitValue = (await this.itemService.getItemById(itemId)).unitValue;
+    return unitValue * (Number(taxPercentage) / 100) * quantity;
+  }
 
-        return unitValue * quantity;
-    }
+  async calculateTotalValue(itemId: number, quantity: number): Promise<number> {
+    const unitValue = (await this.itemService.getItemById(itemId)).unitValue;
+
+    return unitValue * quantity;
+  }
 }

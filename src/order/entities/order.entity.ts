@@ -25,6 +25,9 @@ export class Order {
   @UpdateDateColumn({ name: 'update_at' })
   updateAt: Date;
 
-  @OneToMany(() => OrderItems, (orderItems: OrderItems) => orderItems.order, {cascade: true, eager: true,})
+  @OneToMany(() => OrderItems, (orderItems: OrderItems) => orderItems.order, {
+    cascade: true,
+    eager: true,
+  })
   orderItems?: OrderItems[];
 }

@@ -36,9 +36,12 @@ export class OrderController {
   @Post(':id/items')
   async createOrderItemsByIdOrder(
     @Param('id') id: number,
-    @Body() createOrderItemsDto: CreateOrderItemsDto
+    @Body() createOrderItemsDto: CreateOrderItemsDto,
   ): Promise<OrderItems> {
-    return await this.orderService.createOrderItemsByIdOrder(id, createOrderItemsDto);
+    return await this.orderService.createOrderItemsByIdOrder(
+      id,
+      createOrderItemsDto,
+    );
   }
 
   @ApiOperation({ summary: 'Busca todos pedidos' })
@@ -58,7 +61,10 @@ export class OrderController {
   @ApiOperation({ summary: 'Altera pedido por id' })
   @UsePipes(ValidationPipe)
   @Patch(':id')
-  async update(@Param('id') id: number, @Body() updateOrderDto: UpdateOrderDto): Promise<Order> {
+  async update(
+    @Param('id') id: number,
+    @Body() updateOrderDto: UpdateOrderDto,
+  ): Promise<Order> {
     return await this.orderService.updateOrder(id, updateOrderDto);
   }
 

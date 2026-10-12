@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { Order } from './entities/order.entity';
@@ -24,8 +28,8 @@ export class OrderService {
 
   async getAllOrders(): Promise<Order[]> {
     const orders = await this.orderRepository.find({
-      relations: ['orderItems']
-    })
+      relations: ['orderItems'],
+    });
 
     if (!orders || orders.length === 0) {
       throw new NotFoundException(`Not found orders`);
@@ -58,28 +62,36 @@ export class OrderService {
     const order = await this.getOrderByNumber(createOrderDto.orderNumber);
 
     if (order) {
-      throw new NotFoundException(`existing order number ${createOrderDto.orderNumber}`);
+      throw new NotFoundException(
+        `existing order number ${createOrderDto.orderNumber}`,
+      );
     }
 
-    if(!createOrderDto.orderItems || createOrderDto.orderItems.length === 0) {
+    if (!createOrderDto.orderItems || createOrderDto.orderItems.length === 0) {
       throw new BadRequestException('orderItems are required.');
     }
 
     for (const orderItem of createOrderDto.orderItems) {
-        await this.itemService.getItemById(orderItem.itemId);
+      await this.itemService.getItemById(orderItem.itemId);
     }
 
     const orderItemsValues = await Promise.all(
       createOrderDto.orderItems.map(async (orderItems) => {
-        const taxValue = await this.orderItemsService.calculateTaxValue(orderItems.itemId,orderItems.quantity);
-        const totalValue = await this.orderItemsService.calculateTotalValue(orderItems.itemId,orderItems.quantity);
+        const taxValue = await this.orderItemsService.calculateTaxValue(
+          orderItems.itemId,
+          orderItems.quantity,
+        );
+        const totalValue = await this.orderItemsService.calculateTotalValue(
+          orderItems.itemId,
+          orderItems.quantity,
+        );
 
         return {
           ...orderItems,
           taxValue,
           totalValue,
-        }
-      })
+        };
+      }),
     );
 
     return this.orderRepository.save({
@@ -88,13 +100,21 @@ export class OrderService {
     });
   }
 
-  async createOrderItemsByIdOrder(orderId: number, createOrderItems: CreateOrderItemsDto): Promise<OrderItems> {
-
+  async createOrderItemsByIdOrder(
+    orderId: number,
+    createOrderItems: CreateOrderItemsDto,
+  ): Promise<OrderItems> {
     await this.getOrderById(orderId);
-    await this.itemService.getItemById(createOrderItems.itemId); 
+    await this.itemService.getItemById(createOrderItems.itemId);
 
-    const taxValue = await this.orderItemsService.calculateTaxValue(createOrderItems.itemId, createOrderItems.quantity);
-    const totalValue = await this.orderItemsService.calculateTotalValue(createOrderItems.itemId, createOrderItems.quantity);
+    const taxValue = await this.orderItemsService.calculateTaxValue(
+      createOrderItems.itemId,
+      createOrderItems.quantity,
+    );
+    const totalValue = await this.orderItemsService.calculateTotalValue(
+      createOrderItems.itemId,
+      createOrderItems.quantity,
+    );
 
     const orderItems = this.orderItemsRepository.create({
       ...createOrderItems,
@@ -109,15 +129,17 @@ export class OrderService {
   async deleteOrder(orderId: number): Promise<DeleteResult> {
     await this.getOrderById(orderId);
 
-    return this.orderRepository.delete({id: orderId});
+    return this.orderRepository.delete({ id: orderId });
   }
 
-  async updateOrder(orderId: number, updateOrderDto: UpdateOrderDto): Promise<Order> {
+  async updateOrder(
+    orderId: number,
+    updateOrderDto: UpdateOrderDto,
+  ): Promise<Order> {
     const order = await this.getOrderById(orderId);
     order.orderNumber = updateOrderDto.orderNumber;
     order.orderDescription = updateOrderDto.orderDescription;
 
     return await this.orderRepository.save(order);
   }
- 
-} 
+}

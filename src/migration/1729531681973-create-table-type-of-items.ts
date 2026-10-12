@@ -1,9 +1,8 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class CreateTableTypeOfItems1729531681973 implements MigrationInterface {
-
-    public async up(queryRunner: QueryRunner): Promise<void> {
-        queryRunner.query(`
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    queryRunner.query(`
         
             CREATE TABLE public.type_of_items (
                     id integer NOT NULL,
@@ -26,12 +25,11 @@ export class CreateTableTypeOfItems1729531681973 implements MigrationInterface {
             ALTER TABLE ONLY public.type_of_items ALTER COLUMN id SET DEFAULT nextval('public.type_of_items_id_seq'::regclass);
     
             `);
-    }
+  }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
-        queryRunner.query(`
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    queryRunner.query(`
             DROP TABLE public.type_of_items
             `);
-    }
-
+  }
 }

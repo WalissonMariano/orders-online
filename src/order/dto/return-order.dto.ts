@@ -1,6 +1,5 @@
 import { Order } from '../entities/order.entity';
 import { ReturnOrderItemsDto } from '../../order-items/dto/return-order-items.dto';
-import { ApiProperty } from '@nestjs/swagger';
 
 export class ReturnOrderDto {
   id: number;

@@ -8,10 +8,10 @@ import { TypeOfItemsModule } from '../type-of-items/type-of-items.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([Item]),
-    forwardRef(() => TypeOfItemsModule)
+    forwardRef(() => TypeOfItemsModule),
   ],
   controllers: [ItemController],
   providers: [ItemService],
-  exports: [ItemService]
+  exports: [ItemService],
 })
 export class ItemsModule {}

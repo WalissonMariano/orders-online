@@ -13,6 +13,6 @@ import { ItemsModule } from '../item/item.module';
     OrderItemsModule,
   ],
   providers: [OrderItemsService],
-  exports: [OrderItemsModule, OrderItemsService]
+  exports: [OrderItemsModule, OrderItemsService],
 })
 export class OrderItemsModule {}

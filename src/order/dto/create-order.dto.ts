@@ -3,9 +3,7 @@ import { Type } from 'class-transformer';
 import { IsNumber, IsString, ValidateNested } from 'class-validator';
 import { CreateOrderItemsDto } from '../../order-items/dto/create-order-items.dto';
 
-
 export class CreateOrderDto {
-
   @ApiProperty({
     description: 'Número do Pedido.',
     example: 25,
@@ -28,5 +26,4 @@ export class CreateOrderDto {
   createdAt: Date;
 
   updateAt: Date;
-
 }

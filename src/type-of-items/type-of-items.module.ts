@@ -5,10 +5,7 @@ import { TypeOfItems } from './entities/type-of-items.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([TypeOfItems]), 
-    TypeOfItemsModule
-  ],
+  imports: [TypeOrmModule.forFeature([TypeOfItems]), TypeOfItemsModule],
   providers: [TypeOfItemsService],
   controllers: [TypeOfItemsController],
   exports: [TypeOfItemsService],

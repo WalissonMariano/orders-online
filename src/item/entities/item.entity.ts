@@ -40,8 +40,11 @@ export class Item {
   @UpdateDateColumn({ name: 'update_at' })
   updateAt: Date;
 
-  @ManyToOne(() => TypeOfItems, (typeOfItems: TypeOfItems) => typeOfItems.item, { eager: true })
-  @JoinColumn({name: 'type_of_item_id', referencedColumnName: 'id'})
+  @ManyToOne(
+    () => TypeOfItems,
+    (typeOfItems: TypeOfItems) => typeOfItems.item,
+    { eager: true },
+  )
+  @JoinColumn({ name: 'type_of_item_id', referencedColumnName: 'id' })
   typeOfItems?: TypeOfItems;
-  
 }

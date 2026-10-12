@@ -18,7 +18,7 @@ export class ItemService {
     const items = await this.itemRepository.find({
       relations: ['typeOfItems'],
     });
-    
+
     if (!items || items.length === 0) {
       throw new NotFoundException('Not found items');
     }
@@ -28,8 +28,8 @@ export class ItemService {
 
   async getItemById(id: number): Promise<Item> {
     const item = await this.itemRepository.findOne({
-      where: { 
-        id 
+      where: {
+        id,
       },
     });
 
@@ -42,7 +42,9 @@ export class ItemService {
 
   async getTaxPercentageByItemId(idItem: number): Promise<number> {
     const item = await this.getItemById(idItem);
-    const typeOfItems = await this.typeOfItemService.getTypeOfItemsById(item.typeOfItemId);
+    const typeOfItems = await this.typeOfItemService.getTypeOfItemsById(
+      item.typeOfItemId,
+    );
 
     return typeOfItems?.taxPercentagem ?? 0;
   }
@@ -54,8 +56,11 @@ export class ItemService {
       ...createItemDto,
     });
   }
- 
-  async updateItem(itemId: number, updateItemDto: UpdateItemDto): Promise<Item> {
+
+  async updateItem(
+    itemId: number,
+    updateItemDto: UpdateItemDto,
+  ): Promise<Item> {
     const item = await this.getItemById(itemId);
 
     item.itemDescription = updateItemDto.itemDescription;
@@ -69,6 +74,4 @@ export class ItemService {
 
     return this.itemRepository.delete({ id: itemId });
   }
-
 }
-
