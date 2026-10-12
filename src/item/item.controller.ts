@@ -26,20 +26,20 @@ export class ItemController {
   @Get()
   async getAllItems(): Promise<ReturnItemDto[]> {
     return (await this.itemService.getAllItems()).map(
-      (items) => new ReturnItemDto(items),
+      (item) => new ReturnItemDto(item),
     );
   }
 
   @ApiOperation({ summary: 'Busca item por id' })
   @Get(':id')
-  async getItemById(@Param('id') id: number): Promise<Item> {
-    return await this.itemService.getItemById(id);
+  async getItemById(@Param('id') id: number): Promise<ReturnItemDto> {
+    return new ReturnItemDto(await this.itemService.getItemById(id));
   }
 
   @ApiOperation({ summary: 'Cria item' })
   @UsePipes(ValidationPipe)
   @Post()
-  async create(@Body() createItemDto: CreateItemDto): Promise<CreateItemDto> {
+  async create(@Body() createItemDto: CreateItemDto): Promise<Item> {
     return await this.itemService.createItem(createItemDto);
   }
 

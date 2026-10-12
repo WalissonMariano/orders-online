@@ -1,0 +1,21 @@
+---
+description: Padrão dos DTOs, validação e Swagger
+globs: src/**/dto/**/*.ts
+alwaysApply: false
+---
+
+# DTOs
+
+O body da API é um DTO com `class-validator` e `@ApiProperty`. Não validar campo solto no controller.
+
+- Create: campos obrigatórios com `@IsString`, `@IsNumber` e exemplo no `@ApiProperty`
+- Update: `PartialType` do create, importado de `@nestjs/swagger`
+- Resposta de lista e detalhe: classe `Return*Dto` com construtor que recebe a entity
+- `taxValue` e `totalValue` não entram no body de `order-items`; o service calcula
+- Pedido (`CreateOrderDto`) não recebe itens. Itens entram depois em `CreateOrderItemsDto` (`orderId`, `itemId`, `quantity`)
+
+```typescript
+@ApiProperty({ description: 'Número do Pedido.', example: 25 })
+@IsNumber()
+orderNumber: number;
+```

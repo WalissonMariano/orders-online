@@ -1,0 +1,50 @@
+Comandos úteis — NestJS (order-service)
+
+Os scripts abaixo já estão no package.json. Rode na raiz do projeto.
+
+Aplicação
+  npm run start:dev      sobe a API em modo watch (desenvolvimento)
+  npm run start          sobe a API uma vez, sem recarregar
+  npm run start:debug    sobe com debugger e watch
+  npm run start:prod     roda o build já gerado (node dist/main)
+  npm run build          compila para dist/
+
+Migrations (não rodam sozinhas ao subir a API)
+  npm run migration:show                         lista o que já rodou e o que está pendente
+  npm run migration:run                          aplica as migrations pendentes
+  npm run migration:revert                       desfaz a última migration
+  npm run migration:generate -- src/migration/Nome  gera uma migration a partir das entities
+
+Qualidade
+  npm run lint           ESLint com correção automática
+  npm run format         Prettier em src/ e test/
+  npm test               testes unitários
+  npm run test:watch     testes em modo watch
+  npm run test:cov       testes com cobertura
+  npm run test:e2e       testes de ponta a ponta
+  npm run test:debug     testes com inspector do Node
+
+CLI (usa o @nestjs/cli local)
+  npx nest info                          versões do Nest e do ambiente
+  npx nest build                         mesmo que npm run build
+  npx nest start --watch                 mesmo que npm run start:dev
+
+Gerar código em src/
+  npx nest g resource nome              módulo + controller + service + DTOs
+  npx nest g module nome                só o módulo
+  npx nest g controller nome            só o controller
+  npx nest g service nome               só o service
+  npx nest g class nome                 classe simples
+  npx nest g guard nome                 guard
+  npx nest g interceptor nome           interceptor
+  npx nest g pipe nome                  pipe
+  npx nest g middleware nome            middleware
+  npx nest g filter nome                exception filter
+
+Flags úteis na geração
+  --no-spec          não cria o arquivo de teste
+  --dry-run          mostra o que seria criado, sem gravar
+  --flat             não cria uma pasta nova para o arquivo
+
+Exemplo
+  npx nest g resource pedido --no-spec

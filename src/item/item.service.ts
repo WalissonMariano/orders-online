@@ -11,19 +11,13 @@ export class ItemService {
   constructor(
     @InjectRepository(Item)
     private readonly itemRepository: Repository<Item>,
-    private readonly typeOfItemService: TypeOfItemsService,
+    private readonly typeOfItemsService: TypeOfItemsService,
   ) {}
 
   async getAllItems(): Promise<Item[]> {
-    const items = await this.itemRepository.find({
+    return this.itemRepository.find({
       relations: ['typeOfItems'],
     });
-
-    if (!items || items.length === 0) {
-      throw new NotFoundException('Not found items');
-    }
-
-    return items;
   }
 
   async getItemById(id: number): Promise<Item> {
@@ -34,7 +28,7 @@ export class ItemService {
     });
 
     if (!item) {
-      throw new NotFoundException(`Product id ${id} not found`);
+      throw new NotFoundException(`Item ${id} não encontrado.`);
     }
 
     return item;
@@ -42,15 +36,17 @@ export class ItemService {
 
   async getTaxPercentageByItemId(idItem: number): Promise<number> {
     const item = await this.getItemById(idItem);
-    const typeOfItems = await this.typeOfItemService.getTypeOfItemsById(
+    const typeOfItems = await this.typeOfItemsService.getTypeOfItemsById(
       item.typeOfItemId,
     );
 
-    return typeOfItems?.taxPercentagem ?? 0;
+    return typeOfItems?.taxPercentage ?? 0;
   }
 
-  async createItem(createItemDto: CreateItemDto): Promise<CreateItemDto> {
-    await this.typeOfItemService.getTypeOfItemsById(createItemDto.typeOfItemId);
+  async createItem(createItemDto: CreateItemDto): Promise<Item> {
+    await this.typeOfItemsService.getTypeOfItemsById(
+      createItemDto.typeOfItemId,
+    );
 
     return this.itemRepository.save({
       ...createItemDto,
@@ -63,8 +59,28 @@ export class ItemService {
   ): Promise<Item> {
     const item = await this.getItemById(itemId);
 
-    item.itemDescription = updateItemDto.itemDescription;
-    item.numberItem = updateItemDto.numberItem;
+    if (updateItemDto.typeOfItemId !== undefined) {
+      await this.typeOfItemsService.getTypeOfItemsById(
+        updateItemDto.typeOfItemId,
+      );
+      item.typeOfItemId = updateItemDto.typeOfItemId;
+    }
+
+    if (updateItemDto.itemDescription !== undefined) {
+      item.itemDescription = updateItemDto.itemDescription;
+    }
+
+    if (updateItemDto.numberItem !== undefined) {
+      item.numberItem = updateItemDto.numberItem;
+    }
+
+    if (updateItemDto.unitValue !== undefined) {
+      item.unitValue = updateItemDto.unitValue;
+    }
+
+    if (updateItemDto.image !== undefined) {
+      item.image = updateItemDto.image;
+    }
 
     return await this.itemRepository.save(item);
   }

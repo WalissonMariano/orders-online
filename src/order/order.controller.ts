@@ -14,10 +14,8 @@ import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { ReturnOrderDto } from './dto/return-order.dto';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { CreateOrderItemsDto } from '../order-items/dto/create-order-items.dto';
 import { DeleteResult } from 'typeorm';
 import { Order } from './entities/order.entity';
-import { OrderItems } from 'src/order-items/entities/order-items.entity';
 
 @ApiTags('Order')
 @Controller('order')
@@ -29,19 +27,6 @@ export class OrderController {
   @Post()
   async createOrder(@Body() createOrderDto: CreateOrderDto): Promise<Order> {
     return await this.orderService.createOrder(createOrderDto);
-  }
-
-  @ApiOperation({ summary: 'Insere item em um pedido existente' })
-  @UsePipes(ValidationPipe)
-  @Post(':id/items')
-  async createOrderItemsByIdOrder(
-    @Param('id') id: number,
-    @Body() createOrderItemsDto: CreateOrderItemsDto,
-  ): Promise<OrderItems> {
-    return await this.orderService.createOrderItemsByIdOrder(
-      id,
-      createOrderItemsDto,
-    );
   }
 
   @ApiOperation({ summary: 'Busca todos pedidos' })

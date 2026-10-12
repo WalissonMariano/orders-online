@@ -1,0 +1,29 @@
+---
+description: Padrão dos services Nest
+globs: src/**/*.service.ts
+alwaysApply: false
+---
+
+# Services
+
+`@Injectable()`, repository e outros services injetados no construtor. O controller chama o service; o service fala com o TypeORM.
+
+- Método público é um caso de uso (`createOrder`, `getItemById`, `calculateTaxValue`)
+- Detalhe interno fica `private` (`ensureOrderExists`)
+- Id inexistente: `NotFoundException`
+- Conflito de negócio (número de pedido repetido): `ConflictException`
+- Dado inválido: `BadRequestException`
+- Lista vazia devolve `[]`. Não lançar 404 só porque a tabela está vazia
+- Ao criar `order-items`, conferir se o pedido e o item existem e gravar `taxValue` e `totalValue` calculados
+
+```typescript
+async getOrderById(id: number): Promise<Order> {
+  const order = await this.orderRepository.findOne({ where: { id } });
+
+  if (!order) {
+    throw new NotFoundException(`Pedido ${id} não encontrado.`);
+  }
+
+  return order;
+}
+```

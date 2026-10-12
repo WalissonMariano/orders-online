@@ -6,7 +6,6 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -53,7 +52,7 @@ export class OrderItems {
   @JoinColumn({ name: 'order_id', referencedColumnName: 'id' })
   order: Order;
 
-  @OneToOne(() => Item, { eager: true, cascade: true })
+  @ManyToOne(() => Item, { eager: true })
   @JoinColumn({ name: 'item_id', referencedColumnName: 'id' })
   item: Item;
 }

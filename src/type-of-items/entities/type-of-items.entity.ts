@@ -23,7 +23,7 @@ export class TypeOfItems {
     scale: 2,
     nullable: false,
   })
-  taxPercentagem: number;
+  taxPercentage: number;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
@@ -31,6 +31,6 @@ export class TypeOfItems {
   @UpdateDateColumn({ name: 'update_at' })
   updateAt: Date;
 
-  @OneToMany(() => Item, (item: Item) => item.typeOfItemId)
+  @OneToMany(() => Item, (item: Item) => item.typeOfItems)
   item: Item[];
 }

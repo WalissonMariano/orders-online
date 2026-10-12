@@ -1,0 +1,30 @@
+---
+description: Padrão dos controllers Nest (CRUD da API)
+globs: src/**/*.controller.ts
+alwaysApply: false
+---
+
+# Controllers
+
+Controller fino. A regra de negócio fica no service. Um controller por recurso, cada verbo declarado no método.
+
+- `GET /` lista; `GET /:id` busca; `POST /` cria; `PATCH /:id` altera; `DELETE /:id` remove
+- Rota em kebab-case, igual à pasta: `item`, `type-of-items`, `order`, `order-items`
+- Body tipado com o DTO (`@Body() createOrderDto: CreateOrderDto`)
+- Resposta de lista e detalhe passa pelo DTO de retorno (`new ReturnOrderDto(order)`)
+- `@ApiTags` no controller e `@ApiOperation` em cada método
+- Não consultar repository no controller
+
+```typescript
+@ApiTags('Order')
+@Controller('order')
+export class OrderController {
+  constructor(private readonly orderService: OrderService) {}
+
+  @ApiOperation({ summary: 'Cria pedido' })
+  @Post()
+  createOrder(@Body() createOrderDto: CreateOrderDto): Promise<Order> {
+    return this.orderService.createOrder(createOrderDto);
+  }
+}
+```

@@ -1,0 +1,20 @@
+---
+description: Estilo geral do projeto — código fácil de ler e entender
+alwaysApply: true
+---
+
+# Estilo
+
+Seguir o padrão que o projeto já usa. Não inventar abstração, helper ou módulo novo se o arquivo vizinho já resolve.
+
+- Nomes de classe, método, rota, propriedade e variável: inglês (`createOrder`, `orderNumber`, `typeOfItemId`)
+- Mensagens de exceção e validação: português (`Pedido não encontrado.`)
+- Comentário curto em português só quando o nome do método não explica a regra
+- Código novo copia `order`, `item`, `type-of-items` e `order-items`, não um scaffold genérico
+- Não criar DTO, pipe ou service só para um `if`
+- Preferir o código explícito, mesmo repetido, se ficar mais fácil de ler
+- Early return para evitar `if/else` aninhado
+- Nome explícito, sem abreviação (`orderNumber`, não `num`)
+- Dependência entra pelo construtor (`private readonly`), nunca com `new` de service ou repository
+
+Colunas do banco neste projeto são snake_case sem prefixo (`order_number`, `unit_value`, `created_at`). Propriedade da entity fica camelCase (`orderNumber`).

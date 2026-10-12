@@ -7,6 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository } from 'typeorm';
 import { TypeOfItems } from './entities/type-of-items.entity';
 import { CreateTypeOfItemsDto } from './dto/create-type-of-items.dto';
+import { UpdateTypeOfItemsDto } from './dto/update-type-of-items.dto';
 
 @Injectable()
 export class TypeOfItemsService {
@@ -16,13 +17,7 @@ export class TypeOfItemsService {
   ) {}
 
   async getAllTypesOfItems(): Promise<TypeOfItems[]> {
-    const typeOfItems = await this.typeOfItemsRepository.find();
-
-    if (!typeOfItems || typeOfItems.length === 0) {
-      throw new NotFoundException(`type of items empty`);
-    }
-
-    return typeOfItems;
+    return this.typeOfItemsRepository.find();
   }
 
   async getTypeOfItemsById(id: number): Promise<TypeOfItems> {
@@ -33,7 +28,7 @@ export class TypeOfItemsService {
     });
 
     if (!typeOfItems) {
-      throw new NotFoundException(`Type id ${id} not found`);
+      throw new NotFoundException(`Tipo de item ${id} não encontrado.`);
     }
 
     return typeOfItems;
@@ -49,7 +44,9 @@ export class TypeOfItemsService {
     });
 
     if (!typeOfItems) {
-      throw new NotFoundException(`Type ${typeItemsDescription} not found`);
+      throw new NotFoundException(
+        `Tipo de item ${typeItemsDescription} não encontrado.`,
+      );
     }
 
     return typeOfItems;
@@ -64,11 +61,44 @@ export class TypeOfItemsService {
 
     if (typeOfItems) {
       throw new BadRequestException(
-        `Type ${createTypesOfItems.typeItemsDescription} exist`,
+        `Tipo de item ${createTypesOfItems.typeItemsDescription} já existe.`,
       );
     }
 
     return this.typeOfItemsRepository.save(createTypesOfItems);
+  }
+
+  async updateTypeOfItems(
+    typeOfItemsId: number,
+    updateTypeOfItems: UpdateTypeOfItemsDto,
+  ): Promise<TypeOfItems> {
+    const typeOfItems = await this.getTypeOfItemsById(typeOfItemsId);
+
+    if (
+      updateTypeOfItems.typeItemsDescription &&
+      updateTypeOfItems.typeItemsDescription !==
+        typeOfItems.typeItemsDescription
+    ) {
+      const duplicated = await this.getTypeOfItemsByName(
+        updateTypeOfItems.typeItemsDescription,
+      ).catch(() => undefined);
+
+      if (duplicated) {
+        throw new BadRequestException(
+          `Tipo de item ${updateTypeOfItems.typeItemsDescription} já existe.`,
+        );
+      }
+    }
+
+    if (updateTypeOfItems.typeItemsDescription !== undefined) {
+      typeOfItems.typeItemsDescription = updateTypeOfItems.typeItemsDescription;
+    }
+
+    if (updateTypeOfItems.taxPercentage !== undefined) {
+      typeOfItems.taxPercentage = updateTypeOfItems.taxPercentage;
+    }
+
+    return this.typeOfItemsRepository.save(typeOfItems);
   }
 
   async deleteTypeOfItems(typeOfItemsId: number): Promise<DeleteResult> {

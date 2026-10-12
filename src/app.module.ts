@@ -25,7 +25,7 @@ import { OrderItemsModule } from './order-items/order-items.module';
       },
       entities: [`${__dirname}/**/*.entity{.js,.ts}`],
       migrations: [`${__dirname}/migration/{.ts,*.js}`],
-      migrationsRun: true,
+      migrationsRun: false,
     }),
     OrderModule,
     ItemsModule,

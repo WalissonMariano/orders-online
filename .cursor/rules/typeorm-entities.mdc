@@ -1,0 +1,26 @@
+---
+description: Padrão das entities TypeORM
+globs: src/**/*.entity.ts
+alwaysApply: false
+---
+
+# Entities
+
+Uma entity por tabela, na pasta do módulo (`src/order/entities/order.entity.ts`).
+
+- `@Entity({ name })` explícito, tabela no singular (`order`, `item`, `order_items`)
+- `@PrimaryGeneratedColumn('rowid')` em `id`
+- `@Column({ name: 'order_number' })` com a coluna snake_case e a propriedade camelCase
+- `@CreateDateColumn({ name: 'created_at' })` e `@UpdateDateColumn({ name: 'update_at' })`
+- Relação só se for usada. FK no `@JoinColumn`. `ManyToOne` / `OneToMany` com o lado inverso correto
+- Não usar `cascade: true` em `order-items` → `item`: gravar o item do pedido não pode alterar o cadastro do item
+- Mudança de tabela entra em `src/migration/` e roda com `npm run migration:run`. A API não migra sozinha no boot
+
+```typescript
+@Column({ name: 'order_number', nullable: false })
+orderNumber: number;
+
+@ManyToOne(() => Item, { eager: true })
+@JoinColumn({ name: 'item_id', referencedColumnName: 'id' })
+item: Item;
+```

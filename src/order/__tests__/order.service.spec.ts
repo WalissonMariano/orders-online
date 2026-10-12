@@ -1,22 +1,17 @@
 import { DeleteResult, Repository } from 'typeorm';
 import { OrderService } from '../order.service';
 import { OrderItemsService } from '../../order-items/order-items.service';
-import { ItemService } from '../../item/item.service';
 import { Order } from '../entities/order.entity';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { OrderItems } from '../../order-items/entities/order-items.entity';
-import { NotFoundException } from '@nestjs/common';
+import { ConflictException, NotFoundException } from '@nestjs/common';
 import { CreateOrderDto } from '../dto/create-order.dto';
-import { CreateOrderItemsDto } from 'src/order-items/dto/create-order-items.dto';
-import { itemMock } from '../../item/__mock__/item.mock';
 import { UpdateOrderDto } from '../dto/update-order.dto';
 
 describe('OrderService', () => {
   let orderService: OrderService;
   let orderRepository: Repository<Order>;
   let orderItemsService: OrderItemsService;
-  let itemService: ItemService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -27,20 +22,9 @@ describe('OrderService', () => {
           useClass: Repository,
         },
         {
-          provide: getRepositoryToken(OrderItems),
-          useClass: Repository,
-        },
-        {
           provide: OrderItemsService,
           useValue: {
-            calculateTaxValue: jest.fn(),
-            calculateTotalValue: jest.fn(),
-          },
-        },
-        {
-          provide: ItemService,
-          useValue: {
-            getItemById: jest.fn(),
+            deleteByOrderId: jest.fn(),
           },
         },
       ],
@@ -49,7 +33,6 @@ describe('OrderService', () => {
     orderService = module.get<OrderService>(OrderService);
     orderRepository = module.get<Repository<Order>>(getRepositoryToken(Order));
     orderItemsService = module.get<OrderItemsService>(OrderItemsService);
-    itemService = module.get<ItemService>(ItemService);
   });
 
   describe('getAllOrders', () => {
@@ -63,12 +46,11 @@ describe('OrderService', () => {
       expect(result).toEqual(orders);
     });
 
-    it('should throw NotFoundException if no orders are found', async () => {
+    it('should return an empty list when no orders are found', async () => {
       jest.spyOn(orderRepository, 'find').mockResolvedValueOnce([]);
 
-      await expect(orderService.getAllOrders()).rejects.toThrow(
-        NotFoundException,
-      );
+      const result = await orderService.getAllOrders();
+      expect(result).toEqual([]);
     });
   });
 
@@ -108,35 +90,26 @@ describe('OrderService', () => {
     const createOrderDto: CreateOrderDto = {
       orderNumber: 123,
       orderDescription: 'Sample Order',
-      orderItems: [{ itemId: 1, quantity: 10 }] as CreateOrderItemsDto[],
-      createdAt: new Date(),
-      updateAt: new Date(),
     };
 
-    it('should create an order with order items', async () => {
+    it('should create an order without items', async () => {
       jest.spyOn(orderService, 'getOrderByNumber').mockResolvedValueOnce(null);
-      jest.spyOn(itemService, 'getItemById').mockResolvedValueOnce(itemMock);
-      jest
-        .spyOn(orderItemsService, 'calculateTaxValue')
-        .mockResolvedValueOnce(5);
-      jest
-        .spyOn(orderItemsService, 'calculateTotalValue')
-        .mockResolvedValueOnce(50);
-      jest
-        .spyOn(orderRepository, 'save')
-        .mockResolvedValueOnce(createOrderDto as Order);
+      jest.spyOn(orderRepository, 'save').mockResolvedValueOnce({
+        id: 1,
+        ...createOrderDto,
+      } as Order);
 
       const result = await orderService.createOrder(createOrderDto);
-      expect(result).toEqual(createOrderDto);
+      expect(result).toEqual({ id: 1, ...createOrderDto });
     });
 
-    it('should throw NotFoundException if order already exists', async () => {
+    it('should throw ConflictException if order already exists', async () => {
       jest
         .spyOn(orderService, 'getOrderByNumber')
         .mockResolvedValueOnce({ orderNumber: 123 } as Order);
 
       await expect(orderService.createOrder(createOrderDto)).rejects.toThrow(
-        NotFoundException,
+        ConflictException,
       );
     });
   });
@@ -146,6 +119,9 @@ describe('OrderService', () => {
       jest
         .spyOn(orderService, 'getOrderById')
         .mockResolvedValueOnce({ id: 1 } as Order);
+      jest
+        .spyOn(orderItemsService, 'deleteByOrderId')
+        .mockResolvedValueOnce({ affected: 0 } as DeleteResult);
       jest
         .spyOn(orderRepository, 'delete')
         .mockResolvedValueOnce({ affected: 1 } as DeleteResult);
@@ -161,9 +137,12 @@ describe('OrderService', () => {
         orderNumber: 456,
         orderDescription: 'Updated Order',
       };
-      jest
-        .spyOn(orderService, 'getOrderById')
-        .mockResolvedValueOnce({ id: 1, ...updateOrderDto } as Order);
+      jest.spyOn(orderService, 'getOrderById').mockResolvedValueOnce({
+        id: 1,
+        orderNumber: 123,
+        orderDescription: 'Sample Order',
+      } as Order);
+      jest.spyOn(orderService, 'getOrderByNumber').mockResolvedValueOnce(null);
       jest
         .spyOn(orderRepository, 'save')
         .mockResolvedValueOnce({ id: 1, ...updateOrderDto } as Order);

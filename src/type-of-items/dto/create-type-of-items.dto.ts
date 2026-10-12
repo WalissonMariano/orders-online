@@ -13,9 +13,5 @@ export class CreateTypeOfItemsDto {
     example: 10,
   })
   @IsNumber()
-  taxPercentagem: number;
-
-  createdAt: Date;
-
-  updateAt: Date;
+  taxPercentage: number;
 }

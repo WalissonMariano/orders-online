@@ -2,6 +2,11 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber } from 'class-validator';
 
 export class CreateOrderItemsDto {
+  @ApiProperty({
+    description: 'Id do pedido.',
+    example: 1,
+  })
+  @IsNumber()
   orderId: number;
 
   @ApiProperty({
@@ -17,7 +22,4 @@ export class CreateOrderItemsDto {
   })
   @IsNumber()
   quantity: number;
-
-  createdAt: Date;
-  updateAt: Date;
 }

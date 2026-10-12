@@ -35,7 +35,4 @@ export class CreateItemDto {
   })
   @IsString()
   image: string;
-
-  createdAt: Date;
-  updateAt: Date;
 }
