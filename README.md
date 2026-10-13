@@ -111,10 +111,6 @@ npm test
 npm run test:e2e
 ```
 
-## Design de banco
-
-<img src="https://i.ibb.co/jL3Mv6D/Untitled-7.png" alt="Diagrama do banco" border="0">
-
 ## Comandos úteis
 
 Lista completa em [`comandos_uteis.txt`](comandos_uteis.txt).
