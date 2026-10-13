@@ -14,6 +14,7 @@ Migrations (não rodam sozinhas ao subir a API)
   npm run migration:run                          aplica as migrations pendentes
   npm run migration:revert                       desfaz a última migration
   npm run migration:generate -- src/migration/Nome  gera uma migration a partir das entities
+  npm run seed                                       popula o banco com dados de demonstração
 
 Qualidade
   npm run lint           ESLint com correção automática
