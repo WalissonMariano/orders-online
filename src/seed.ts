@@ -16,9 +16,7 @@ function calculateTotalValue(unitValue: number, quantity: number): number {
   return unitValue * quantity;
 }
 
-async function seed() {
-  await AppDataSource.initialize();
-
+export async function populateDemoData(): Promise<void> {
   const typeOfItemsRepository = AppDataSource.getRepository(TypeOfItems);
   const itemRepository = AppDataSource.getRepository(Item);
   const orderRepository = AppDataSource.getRepository(Order);
@@ -112,14 +110,20 @@ async function seed() {
   await saveOrderItem(secondOrder.id, milk, productTax, 4);
   await saveOrderItem(secondOrder.id, rice, productTax, 1);
   await saveOrderItem(secondOrder.id, delivery, serviceTax, 1);
+}
 
+async function seed() {
+  await AppDataSource.initialize();
+  await populateDemoData();
   await AppDataSource.destroy();
 }
 
-seed().catch(async (error) => {
-  console.error(error);
-  if (AppDataSource.isInitialized) {
-    await AppDataSource.destroy();
-  }
-  process.exit(1);
-});
+if (require.main === module) {
+  seed().catch(async (error) => {
+    console.error(error);
+    if (AppDataSource.isInitialized) {
+      await AppDataSource.destroy();
+    }
+    process.exit(1);
+  });
+}

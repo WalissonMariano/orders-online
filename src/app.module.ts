@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { OrderModule } from './order/order.module';
 import { ItemsModule } from './item/item.module';
 import { TypeOfItemsModule } from './type-of-items/type-of-items.module';
@@ -12,6 +14,14 @@ import { OrderItemsModule } from './order-items/order-items.module';
   imports: [
     ConfigModule.forRoot({
       envFilePath: ['.env'],
+    }),
+    ThrottlerModule.forRoot({
+      throttlers: [
+        {
+          ttl: 60000,
+          limit: 30,
+        },
+      ],
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
@@ -33,6 +43,12 @@ import { OrderItemsModule } from './order-items/order-items.module';
     OrderItemsModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+  ],
 })
 export class AppModule {}
